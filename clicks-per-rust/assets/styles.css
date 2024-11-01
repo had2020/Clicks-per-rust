@@ -110,36 +110,3 @@ button {
     background-color: #0f0f0f69;
   }
 }
-
-textarea {
-  border: none;
-  background-color: #0f0f0f98;
-  border-radius: 10px;
-  padding: 20px;
-  font-family: 'Courier New', monospace;
-  font-size: 18px;
-  color: #ffffff;
-  resize: none;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
-  width: 100%; /* take up the full width */
-  height: 100%; /*take up the full height */
-  /* resize: none; */
-}
-
-textarea:focus {
-  outline: none;
-  background-color: #19191999;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-}
-html, body {
-  height: 100%;
-  margin: 0;
-}
-
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Full height of the viewport */
-  padding: 10px; /* Optional padding around the text area */
-}

@@ -24,6 +24,10 @@ fn test(event: Event<MouseData>) {
     log::info!("Event thing: {event:?}"); // yes you need a crate called log (A rust universal)
 }
 
+fn start_timer() {
+
+}
+
 // props with componet
 #[component]
 fn Notes1(props: CustomProps) -> Element {
@@ -52,21 +56,6 @@ fn app() -> Element {
             "Click me!"
         }
         p {class: "white", "Clicked : {count}"}
-
-        // User input
-        input {
-            value: "{email}",
-            oninput: move |event| {
-                email.set(event.value())
-            }
-        }
-        p {class: "white","User input : {email}"}
-        div {
-            class:"container",
-            textarea {
-                class:"textarea"
-            }
-        }
     }
 }
 
