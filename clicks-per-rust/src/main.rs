@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 //use dioxus_logger::tracing::Level; ???
 //use nfd::{open_file_dialog, Response}; // imports file dialog windows for rust cross platform
-use std::time::{SystemTime, UNIX_EPOCH}; // for system time
+use chrono::Timelike;
 
 // declaration of a prop
 #[derive(Props, Clone, PartialEq)] // marcos
@@ -23,34 +23,44 @@ fn Notes() -> Element {
 fn test(event: Event<MouseData>) {
     //println!("{event:?}"); // printing despite type mismatch
     log::info!("Event thing: {event:?}"); // yes you need a crate called log (A rust universal)
-    start_timer();
 }
 
-fn start_timer() {
-    let system_time = SystemTime::now();
-    // Check if time is greater than UNIX_EPOCH to avoid errors
-    match system_time.duration_since(UNIX_EPOCH) {
-        Ok(duration) => log::info!("System time in seconds since UNIX_EPOCH: {}", duration.as_secs()),
-        Err(e) => log::info!("Error getting system time: {:?}", e),
+fn time_handler(intial_time) {
+    let end_time = intial_time + 5 ;
+    let mut current_time = chrono::Local::now();
+    while (current_time < end_time) {
+        current_time = chrono::Local::now();
     }
+    return;
+
 }
 
 // props with componet
 #[component]
 fn Notes1(props: CustomProps) -> Element {
+    let current_time = chrono::Local::now();
     rsx! {
         p { "{props.text}" }
+        p { "{current_time.second()}" }
     }
 }
 
 fn app() -> Element {
     log::info!("startup log");
     let mut count = use_signal(||0); // creates new var init with 0 ( HOOK )
+    let mut intial_time = chrono::Local::now(); 
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
         p {class: "white", "Testing 1 2 3" } 
         Notes {}
         Notes1 {text: "test from  struct"}
+
+        button {
+            onclick: move |event | {
+                intial_time = chrono::Local::now();
+                time_handler(intial_time);
+            }
+        }
 
         // button tied to event handeler
         button {
