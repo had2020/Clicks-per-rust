@@ -19,7 +19,7 @@ fn time_handler(intial_time: chrono::DateTime<chrono::Local>) -> bool {
     let parsed_intial:i32 = intial_time.to_string().parse().unwrap();
     let current_time = chrono::Local::now().second();
     let mut parsed_current:i32 = current_time.to_string().parse().unwrap();
-    let end_time = parsed_intial + 5;
+    let end_time = parsed_intial + 5; // Todo, don't forget about 60 seconds in a min, reseting intial
     while parsed_current < end_time {
         parsed_current = chrono::Local::now().second().to_string().parse().unwrap();
     }
@@ -29,10 +29,10 @@ fn time_handler(intial_time: chrono::DateTime<chrono::Local>) -> bool {
 // props with componet
 #[component]
 fn Notes1(props: CustomProps) -> Element {
-    let current_time = chrono::Local::now();
+    //let current_time = chrono::Local::now();
     rsx! {
         p { "{props.text}" }
-        p { "{current_time.second()}" }
+        //p { "{current_time.second()}" }
     }
 }
 
@@ -46,10 +46,13 @@ fn app() -> Element {
         p {class: "white", "Testing 1 2 3" } 
         Notes1 {text: "test from  struct"}
 
+        p { "current seconds: {intial_time} "}
+
         button {
             onclick: move |_event | {
-                intial_time = use_signal(||chrono::Local::now().second());
+                //intial_time = use_signal(||chrono::Local::now().second()); you can not use use_signal, use set
                 //time_handler(chrono::Local::now());
+                intial_time.set(chrono::Local::now().second());
             },
             "start timer"
         }
