@@ -5,6 +5,8 @@ use dioxus::prelude::*;
 use chrono::Timelike;
 //use chrono::{DateTime, Local};
 
+static mut GLOBAL_VAR: i32 = 0;
+
 //fn time_handler(intial_time: chrono::DateTime<chrono::Local>) -> bool {
 fn time_handler(intial_time: u32) -> bool {
     //let current_string = chrono::Local::now().to_string();
@@ -12,7 +14,10 @@ fn time_handler(intial_time: u32) -> bool {
     let parsed_intial:u32 = intial_time.to_string().parse().unwrap();
     let current_time = chrono::Local::now().second();
     let mut parsed_current:u32 = current_time.to_string().parse().unwrap();
-    let end_time = parsed_intial + 5; // Todo, don't forget about 60 seconds in a min, reseting intial
+    let mut end_time = parsed_intial + 5; // Todo, don't forget about 60 seconds in a min, reseting intial
+    if end_time > 54 {
+        end_time = 59;
+    }
     while parsed_current < end_time {
         parsed_current = chrono::Local::now().second().to_string().parse().unwrap();
     }
@@ -34,22 +39,16 @@ fn app() -> Element {
             onclick: move |_event | {
                 if started == use_signal(||false) {
                     started.set(true);
+                    intial_time.set(chrono::Local::now().second());
+                    time_handler(chrono::Local::now().second());
+                } else {
+                    count+=1;
                 }
                 //intial_time = use_signal(||chrono::Local::now().second()); you can not use use_signal, use set
-                intial_time.set(chrono::Local::now().second());
-                time_handler(chrono::Local::now().second());
             },
             "start timer"
         }
         p { " timer_fin: {timer_fin}" }
-
-        // button tied to event handeler
-        button {
-            onclick: move |_event | { 
-                count+=1;
-            },
-            "Click me!"
-        }
         p {class: "white", "Clicked : {count}"}
     }
 }
