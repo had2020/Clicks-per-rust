@@ -5,10 +5,11 @@ use dioxus::prelude::*;
 use chrono::Timelike;
 //use chrono::{DateTime, Local};
 
-static mut GLOBAL_VAR: i32 = 0;
+static mut Global_Counting: bool = false;
 
 //fn time_handler(intial_time: chrono::DateTime<chrono::Local>) -> bool {
-fn time_handler(intial_time: u32) -> bool {
+fn time_handler(intial_time: u32) {
+    unsafe { Global_Counting = true;};
     //let current_string = chrono::Local::now().to_string();
     //let mut seconds = chrono::TimeDelta::seconds(10);
     let parsed_intial:u32 = intial_time.to_string().parse().unwrap();
@@ -21,32 +22,35 @@ fn time_handler(intial_time: u32) -> bool {
     while parsed_current < end_time {
         parsed_current = chrono::Local::now().second().to_string().parse().unwrap();
     }
-    return true;
+    unsafe { Global_Counting = false;};
+    return;
 }
 
 fn app() -> Element {
     log::info!("startup log");
-    let mut started = use_signal(||false);
+    let mut show_first_bt = use_signal(||true);
     let timer_fin = use_signal(||false);
     let mut count = use_signal(||0); // creates new var init with 0 ( HOOK )
     let mut intial_time = use_signal(||chrono::Local::now().second());
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
-
-        p { "current seconds: {intial_time} "}
-
-        button {
-            onclick: move |_event | {
-                if started == use_signal(||false) {
-                    started.set(true);
-                    intial_time.set(chrono::Local::now().second());
-                    time_handler(chrono::Local::now().second());
-                } else {
-                    count+=1;
-                }
-                //intial_time = use_signal(||chrono::Local::now().second()); you can not use use_signal, use set
-            },
-            "start timer"
+        
+        p {"time started: {intial_time}"}
+        if (*show_first_bt)() {
+            button {
+                onclick: move |_event | {
+                    unsafe { if Global_Counting == false {
+                        show_first_bt.set(false);// TODO, it won't update till we fix the  way we count time in a while loop signal threadedly which halts the program
+                        intial_time.set(chrono::Local::now().second()); // displaying time started at
+                        time_handler(chrono::Local::now().second());
+                    } if Global_Counting == true {
+                        count+=1;
+                    }}
+                },
+                "start timer"
+            }
+        } else {
+            p {"test"}
         }
         p { " timer_fin: {timer_fin}" }
         p {class: "white", "Clicked : {count}"}
@@ -54,6 +58,6 @@ fn app() -> Element {
 }
 
 fn main() {
-    launch(app)
+    launch(app);
 }
 
