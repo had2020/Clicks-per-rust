@@ -32,17 +32,29 @@ fn app() -> Element {
     let timer_fin = use_signal(||false);
     let mut count = use_signal(||0); // creates new var init with 0 ( HOOK )
     let mut intial_time = use_signal(||chrono::Local::now().second());
+    let data = use_future(|| async {
+        time_handler(chrono::Local::now().second())
+    });
+
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
         
         p {"time started: {intial_time}"}
+
+        button {
+            onclick: move |_event | {
+                count+=1;
+            },
+            "test"
+        }
+
         if (*show_first_bt)() {
             button {
                 onclick: move |_event | {
                     unsafe { if Global_Counting == false {
-                        show_first_bt.set(false);// TODO, it won't update till we fix the  way we count time in a while loop signal threadedly which halts the program
+                        show_first_bt.set(false);
                         intial_time.set(chrono::Local::now().second()); // displaying time started at
-                        time_handler(chrono::Local::now().second());
+                        data;
                     } if Global_Counting == true {
                         count+=1;
                     }}
@@ -52,6 +64,7 @@ fn app() -> Element {
         } else {
             p {"test"}
         }
+
         p { " timer_fin: {timer_fin}" }
         p {class: "white", "Clicked : {count}"}
     }
