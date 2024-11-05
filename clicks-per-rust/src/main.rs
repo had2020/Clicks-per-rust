@@ -29,45 +29,55 @@ fn time_handler(intial_time: u32) {
 fn app() -> Element {
     log::info!("startup log");
 
-    let mut show_first_bt = use_signal(||true);
     let timer_fin = use_signal(||false);
     let mut count = use_signal(||0); // creates new var init with 0 ( HOOK )
     let mut intial_time = use_signal(||chrono::Local::now().second());
-    let mut oncounting = use_signal(||false);
+    let mut nocounting = use_signal(||true);
+    let mut not_ended = use_signal(||true);
 
-    let mut parsed_current:u32 = current_time.to_string().parse().unwrap();
-    let mut end_time = parsed_intial + 5; 
 
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
         
         p {"time started: {intial_time}"}
 
-        button {
-            onclick: move |_event | {
-                if (oncounting()) { // * only for display
-                    count+=1;
-                    intial_time.set(chrono::Local::now().second());
-                    if end_time > 54 { // TODO test and fix
-                        end_time = 59;
+        if (*not_ended)() {
+            button {
+                onclick: move |_event | {
+                    if nocounting() { 
+    
+                        intial_time.set(chrono::Local::now().second());
+                        nocounting.set(false);
+                    } else {
+                        let parsed_intial:u32 = intial_time.to_string().parse().unwrap();
+                        let current_time = chrono::Local::now().second();
+                        let parsed_current:u32 = current_time.to_string().parse().unwrap();
+                        let mut end_time = parsed_intial + 5; 
+                        if end_time > 54 { // TODO test and fix
+                            end_time = 59;
+                        }
+                        
+                        if parsed_current < end_time {
+                            count+=1;
+                        } else {
+                            nocounting.set(false);
+                            not_ended.set(false);
+                        }
                     }
-                } else {
-                    let parsed_intial:u32 = intial_time.to_string().parse().unwrap();
-                    let current_time = chrono::Local::now().second();
+                    // TODO if less then end time, add count, When more stop. Problem if no click.
+                    /* 
+                    unsafe { if Global_Counting == false {
+                        show_first_bt.set(false);
+                        intial_time.set(chrono::Local::now().second()); // displaying time started at
+                        time_handler(chrono::Local::now().second());
+                    } if Global_Counting == true {
+                        count+=1;
+                    }}
+                    */
+                },
+                "start timer"
+            }
 
-                    oncounting.set(true)
-
-                }
-                // TODO if less then end time, add count, When more stop. Problem if no click.
-                unsafe { if Global_Counting == false {
-                    show_first_bt.set(false);
-                    intial_time.set(chrono::Local::now().second()); // displaying time started at
-                    time_handler(chrono::Local::now().second());
-                } if Global_Counting == true {
-                    count+=1;
-                }}
-            },
-            "start timer"
         }
 
         p { " timer_fin: {timer_fin}" }
