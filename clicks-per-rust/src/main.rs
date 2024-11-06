@@ -13,7 +13,12 @@ fn app() -> Element {
     let mut nocounting = use_signal(||true);
     let mut not_ended = use_signal(||true);
 
+    let mut last_current_time = use_signal(||chrono::Local::now().second());
+    let mut last_end_time = use_signal(||chrono::Local::now().second());
+
+
     let mut cps = use_signal(||0.0);
+    let mut cps_float = 0.0_f32;
 
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
@@ -35,10 +40,12 @@ fn app() -> Element {
                         if end_time > 54 { // TODO test and fix
                             end_time = 59;
                         }
+                        last_end_time.set(end_time);
                         
                         if parsed_current < end_time {
                             count+=1.0;
-                        } else {
+                            last_current_time.set(parsed_current);
+                        } else if parsed_current > end_time{ // error here
                             nocounting.set(false);
                             not_ended.set(false);
                         }
@@ -46,15 +53,19 @@ fn app() -> Element {
                 },
                 " Click Me To Count! "
             }
-
         } else {
             { cps.set(count / 5.0); }
+            { cps_float = (cps)() }
+            { cps_float = cps_float.round()}
             p {
                 class: "White",
                 "You clicked {count} times in 5 seconds."
                 "Your Clicks Per a Second is {cps} (CPS)"
             }
         }
+
+        p {"end time: {last_end_time}"} // debug
+        p {"current time: {last_current_time}"} // debug
 
         //p { " timer_fin: {timer_fin}" } // debug
         if (*not_ended)() {
@@ -68,9 +79,10 @@ fn app() -> Element {
                 },
                 "Test Again"
             }
-            match (count)() {
-                1.0 => rsx!{ p {"Your a Grandma"} p {class: "big", "👵"}},
-                _ => rsx!{ p {"on no"} }
+            match cps_float {
+                2.0 => rsx!{ p {"Your a Grandma"} p {class: "big", "👵"}},
+                1.0 => rsx!{ p {"Your an imposter"} p {class: "big", "🔪"}},
+                _ => rsx!{ p {"Your an auto clicker!"} p {class: "big", "🤖"} }
             }
         }
     }
