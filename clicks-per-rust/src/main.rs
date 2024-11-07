@@ -33,10 +33,11 @@ fn app() -> Element {
                         intial_time.set(chrono::Local::now().second());
                         nocounting.set(false);
                     } else {
-                        let parsed_intial:u32 = intial_time.to_string().parse().unwrap();
+                        //let parsed_intial:u32 = intial_time.to_string().parse().unwrap();
+                        let parsed_initial:u32 = (intial_time()).to_string().parse().unwrap(); //error somewhere here!
                         let current_time = chrono::Local::now().second();
                         let parsed_current:u32 = current_time.to_string().parse().unwrap();
-                        let mut end_time = parsed_intial + 5; 
+                        let mut end_time = parsed_initial + 5; 
                         if end_time > 54 { // TODO test and fix
                             end_time = 59;
                         }
@@ -81,8 +82,8 @@ fn app() -> Element {
             }
             match cps_float {
                 2.0 => rsx!{ p {"Your a Grandma"} p {class: "big", "👵"}},
-                1.0 => rsx!{ p {"Your an imposter"} p {class: "big", "🔪"}},
-                _ => rsx!{ p {"Your an auto clicker!"} p {class: "big", "🤖"} }
+                1.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
+                _ => rsx!{ p {"Your an Auto clicker!"} p {class: "big", "🤖"} }
             }
         }
     }
