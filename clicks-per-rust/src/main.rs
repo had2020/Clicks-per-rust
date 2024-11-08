@@ -35,7 +35,7 @@ fn app() -> Element {
                     } else {
                         //let parsed_intial:u32 = intial_time.to_string().parse().unwrap();
                         let parsed_initial:u32 = (intial_time()).to_string().parse().unwrap(); //error somewhere here!
-                        let current_time = chrono::Local::now().second();
+                        let current_time = chrono::Local::now().second(); // TODO forget errors make a total counted and count the change in seconds place, for timer
                         let parsed_current:u32 = current_time.to_string().parse().unwrap();
                         let mut end_time = parsed_initial + 5; 
                         if end_time > 54 { // TODO test and fix
