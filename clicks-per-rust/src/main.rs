@@ -3,6 +3,7 @@ use dioxus::prelude::*;
 //use nfd::{open_file_dialog, Response}; // imports file dialog windows for rust cross platform
 //use chrono::*;
 use chrono::Timelike;
+use tokio;
 //use chrono::{DateTime, Local};
 
 fn app() -> Element {
@@ -19,6 +20,23 @@ fn app() -> Element {
 
     let mut cps = use_signal(||0.0);
     let mut cps_float = 0.0_f32;
+
+    let test_future = use_future(///     use_future(move || async move {
+        ///         loop {
+        ///            if running() {
+        ///                count += 1;
+        ///            }
+        ///            tokio::time::sleep(Duration::from_millis(400)).await;
+        ///        })
+
+    spawn(async {
+        let _ = tokio::spawn(async {}).await;
+    
+        let _ = tokio::task::spawn_local(async {
+            // some !Send work
+        })
+        .await;
+    });
 
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
