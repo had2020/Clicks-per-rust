@@ -1,115 +1,44 @@
 use dioxus::prelude::*;
-//use dioxus_logger::tracing::Level; ???
-//use nfd::{open_file_dialog, Response}; // imports file dialog windows for rust cross platform
-//use chrono::*;
 use chrono::Timelike;
-use tokio;
-//use chrono::{DateTime, Local};
+//use tokio;
 
-static mut TIME_END: bool = false;
+//static mut TIME_END: bool = false;
 
 fn app() -> Element {
     log::info!("startup log");
 
     let mut count = use_signal(|| 0.0); // creates new var init with 0 ( HOOK )
-    //let mut intial_time = use_signal(|| chrono::Local::now().second());
     let mut nocounting = use_signal(|| true);
     let mut not_ended = use_signal(|| true);
 
-    let mut last_current_time = use_signal(|| chrono::Local::now().second());
-    let mut last_end_time = use_signal(|| chrono::Local::now().second());
+    let last_current_time = use_signal(|| chrono::Local::now().second());
+    let last_end_time = use_signal(|| chrono::Local::now().second());
 
     let mut cps = use_signal(|| 0.0);
     let mut cps_float = 0.0_f32;
 
-    let mut timer_ended = use_signal(|| false);
-
-    let exp = move || {
-        spawn(async move {
-            unsafe {TIME_END = true}
-        });
-    };
-    
-    /*
-    let mut future1 = use_resource(|| async move {
-        let mut intial_time = use_signal(|| chrono::Local::now().second());
-        let parsed_initial: u32 = (intial_time()).to_string().parse().unwrap();
-        let current_time = chrono::Local::now().second();
-        let parsed_current: u32 = current_time.to_string().parse().unwrap();
-        let mut end_time = parsed_initial + 5;
-        if end_time > 54 {
-            end_time = 0;
-        }
-        while current_time != end_time {
-            current_time = chrono::Local::now().second();
-        }
-        unsafe { TIME_END = true }
-    });
-    */
-    /*
-    spawn(async {
-        let _ = tokio::spawn(async {}).await;
-
-        let _ = tokio::task::spawn_local(async {
-            // some !Send work
-        })
-        .await;
-    });
-    */
-
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
 
-        //p {"time started: {intial_time}"} // debug
-
         if (*not_ended)() {
             button {
-                onclick: move |_event | {
-                    /* 
-                    if nocounting() {
-
-                        intial_time.set(chrono::Local::now().second());
-                        nocounting.set(false);
-                    } else {
-                        //let parsed_intial:u32 = intial_time.to_string().parse().unwrap();
-                        let parsed_initial:u32 = (intial_time()).to_string().parse().unwrap(); //error somewhere here!
-                        let current_time = chrono::Local::now().second(); // TODO forget errors make a total counted and count the change in seconds place, for timer
-                        let parsed_current:u32 = current_time.to_string().parse().unwrap();
-                        let mut end_time = parsed_initial + 5;
-                        if end_time > 54 { // TODO test and fix
-                            end_time = 59;
+                // running parrarell 
+                onclick: move | _event | {
+                    spawn(async move {
+                        count+= 999.9;
+                        for i in 0..=100000{
+                            count+= 10.0;
                         }
-                        last_end_time.set(end_time);
-
-                        if parsed_current < end_time {
-                            count+=1.0;
-                            last_current_time.set(parsed_current);
-                        } else if parsed_current > end_time{ // error here
-                            nocounting.set(false);
-                            not_ended.set(false);
-                        }
-                    }
-                    */
-                    //future1
-                    exp;
+                        println!("Clicked!");
+                    });
                 },
                 " Click Me To Count! "
-            }
-        } else {
-            { cps.set(count / 5.0); }
-            { cps_float = (cps)() }
-            { cps_float = cps_float.round()}
-            p {
-                class: "White",
-                "You clicked {count} times in 5 seconds."
-                "Your Clicks Per a Second is {cps} (CPS)"
             }
         }
 
         p {"end time: {last_end_time}"} // debug
         p {"current time: {last_current_time}"} // debug
 
-        //p { " timer_fin: {timer_fin}" } // debug
         if (*not_ended)() {
             p {class: "white", "Clicked : {count}"}
         } else {
