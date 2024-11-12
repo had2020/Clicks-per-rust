@@ -1,8 +1,8 @@
 use dioxus::prelude::*;
 use chrono::Timelike;
-use tokio;
+//use tokio;
 
-static mut TIME_END: bool = false;
+//static mut TIME_END: bool = false;
 
 fn app() -> Element {
     log::info!("startup log");
@@ -17,28 +17,24 @@ fn app() -> Element {
     let mut cps = use_signal(|| 0.0);
     let mut cps_float = 0.0_f32;
 
-    let exp = move || {
-        spawn(async move {
-            unsafe {TIME_END = true}
-            count+= 999.9;
-        });
-    };
-
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
 
         if (*not_ended)() {
             button {
-                onclick: move |_event | {
-                    async move {
-                        tokio::spawn(async move {
-                            exp();
-                        }).await;
+                // running parrarell 
+                onclick: move | _event | {
+                    spawn(async move {
+                        count+= 999.9;
+                        for i in 0..=100000{
+                            count+= 10.0;
                         }
-                    }
-                }
+                        println!("Clicked!");
+                    });
+                },
                 " Click Me To Count! "
             }
+        }
 
         p {"end time: {last_end_time}"} // debug
         p {"current time: {last_current_time}"} // debug
