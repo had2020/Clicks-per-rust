@@ -30,20 +30,15 @@ fn app() -> Element {
         if (*not_ended)() {
             button {
                 onclick: move |_event | {
-                    exp;
-                },
+                    async move {
+                        tokio::spawn(async move {
+                            exp();
+                        }).await;
+                        }
+                    }
+                }
                 " Click Me To Count! "
             }
-        } else {
-            { cps.set(count / 5.0); }
-            { cps_float = (cps)() }
-            { cps_float = cps_float.round()}
-            p {
-                class: "White",
-                "You clicked {count} times in 5 seconds."
-                "Your Clicks Per a Second is {cps} (CPS)"
-            }
-        }
 
         p {"end time: {last_end_time}"} // debug
         p {"current time: {last_current_time}"} // debug
