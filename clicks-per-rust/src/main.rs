@@ -22,15 +22,33 @@ fn app() -> Element {
 
         if (*not_ended)() {
             button {
-                // running parrarell 
                 onclick: move | _event | {
-                    spawn(async move {
-                        count+= 999.9;
-                        for i in 0..=100000{
-                            count+= 10.0;
-                        }
-                        println!("Clicked!");
-                    });
+                    if (nocounting)() == true {
+                        nocounting.set(false);
+                        // running parrarell 
+                        spawn(async move {
+
+                            let mut current_time = chrono::Local::now().second();
+                            let mut end_time = current_time + 5;
+                            if end_time > 58 {
+                                end_time = 5;
+                            }
+
+                            while current_time != end_time {
+                                current_time =  chrono::Local::now().second();
+                            }
+                            not_ended.set(false);
+
+                            // debug test, if parrel runing
+                            /* 
+                            count+= 999.9;
+                            for i in 0..=100000{
+                                count+= 10.0;
+                            }
+                            println!("Clicked!");
+                            */
+                        });
+                    }
                 },
                 " Click Me To Count! "
             }
