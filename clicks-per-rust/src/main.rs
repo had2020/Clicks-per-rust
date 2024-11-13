@@ -1,8 +1,12 @@
 use dioxus::prelude::*;
 use chrono::Timelike;
-//use tokio;
+//use tokio::time::{self, Duration};
+use tokio::time::{sleep, Duration};
 
 //static mut TIME_END: bool = false;
+
+use std::thread;
+use std::time::Duration;
 
 fn app() -> Element {
     log::info!("startup log");
@@ -34,9 +38,21 @@ fn app() -> Element {
                                 end_time = 5;
                             }
 
+                            /* 
                             while current_time != end_time {
-                                current_time =  chrono::Local::now().second();
+                                current_time = chrono::Local::now().second();
                             }
+                            */
+
+                            /* 
+                            while chrono::Local::now().second() != end_time {
+                                
+                            }
+                            */
+                            
+                            sleep(Duration::from_secs(5)).await;
+
+                            count+= 999.9;
                             not_ended.set(false);
 
                             // debug test, if parrel runing
@@ -50,12 +66,19 @@ fn app() -> Element {
                         });
                     }
                 },
-                " Click Me To Count! "
+                " Click Me To Count! OLD"
             }
         }
 
-        p {"end time: {last_end_time}"} // debug
-        p {"current time: {last_current_time}"} // debug
+        button {
+            onclick: move | _event | {
+                count+= 1.0;
+            },
+            " Click Me To Count! "
+        }
+
+        //p {"end time: {last_end_time}"} // debug
+       //p {"current time: {last_current_time}"} // debug
 
         if (*not_ended)() {
             p {class: "white", "Clicked : {count}"}
