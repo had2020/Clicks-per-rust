@@ -5,9 +5,6 @@ use tokio::time::{sleep, Duration};
 
 //static mut TIME_END: bool = false;
 
-use std::thread;
-use std::time::Duration;
-
 fn app() -> Element {
     log::info!("startup log");
 
@@ -44,13 +41,11 @@ fn app() -> Element {
                             }
                             */
 
-                            /* 
                             while chrono::Local::now().second() != end_time {
                                 
                             }
-                            */
                             
-                            sleep(Duration::from_secs(5)).await;
+                            //sleep(Duration::from_secs(5)).await;
 
                             count+= 999.9;
                             not_ended.set(false);
