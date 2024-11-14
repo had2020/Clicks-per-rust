@@ -25,7 +25,7 @@ fn app() -> Element {
                         count+=1.0;
                         let current_second = chrono::Local::now().second();
                         let current_minute = chrono::Local::now().minute();
-                        if current_second >= (*end_second)() && current_minute >= (*end_minute)() {
+                        if current_second >= (*end_second)() && current_minute >= (*end_minute)() { // error with min
                             not_ended.set(false);
                         } if current_minute > (*end_minute)() {
                             not_ended.set(false);
@@ -51,7 +51,7 @@ fn app() -> Element {
             button {
                 onclick: move |_event | {
                     count.set(0.0);
-                    counting.set(true);
+                    counting.set(false);
                     not_ended.set(true);
                     end_minute.set(0);
                     end_second.set(0);
