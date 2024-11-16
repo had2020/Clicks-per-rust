@@ -1,90 +1,61 @@
 use dioxus::prelude::*;
 use chrono::{TimeDelta, Timelike};
-//use tokio::time::{self, Duration};
-//use tokio::time::{sleep, Duration};
-//use tokio::spawn;
-//use async_std::task;
-use async_std::task::spawn;
-
-
-static mut TIME_END: bool = false;
-
-async fn timer() -> f32 {
-    //unsafe { TIME_END = true } // DEBUG ONLY
-    let mut current_time = chrono::Local::now().second();
-    let mut end_time = current_time + 5;
-    if end_time > 58 {
-        end_time = 5;
-    }
-    
-    loop {
-        current_time = chrono::Local::now().second();
-        if current_time == end_time {
-            break;
-        }
-        //sleep(Duration::from_millis(100)).await; // short sleep to yield control, otherwise halt 
-    }
-    
-    unsafe { TIME_END = true };
-    0.1 
-}
 
 fn app() -> Element {
     log::info!("startup log");
 
-    let mut signal = use_signal_sync(|| 0.0_f32);
     let mut count = use_signal(|| 0.0); // creates new var init with 0 ( HOOK )
-    let mut nocounting = use_signal(|| true);
+    let mut counting = use_signal(|| false); // for using only one variable
     let mut not_ended = use_signal(|| true);
-
-    let mut result = use_signal(||0.0_f32);
-    //let last_current_time = use_signal(|| chrono::Local::now().second());
-    //let last_end_time = use_signal(|| chrono::Local::now().second());
-
-    //let mut cps = use_signal(|| 0.0);
-    let mut cps_float = 0.0_f32;
+    let mut cps_float = use_signal(|| 0.0_f32);
+    let mut end_second = use_signal(|| 0_u32);
+    let mut end_minute = use_signal(|| 0_u32);
+    let mut starting_second = use_signal(|| 0_u32);
+    let mut dev_mode = use_signal(|| false);
 
     rsx! {
         link { rel: "stylesheet", href: "styles.css" } // styling link
 
+        // The following comments are for debuging, the are under a hidden class
+        if (*dev_mode)() {
+            p {"current sec{chrono::Local::now().second()}"}
+            p {"end sec {end_second}"}
+            p {"end min {end_minute}"}
+            p {"{starting_second}"}
+        }
+
         if (*not_ended)() {
             button {
                 onclick: move | _event | {
-                    if (nocounting)() == true {
-                        nocounting.set(false);
-                        //spawn(timer()); not returning only running
-                        spawn(async move {
-                            /* 
-                            let _future_cps = timer();
-                            //signal.set(_future_cps.clone()); nope of course not
-                            // Testing and debuging here
-                            let result = _future_cps.await; //works but halts 
-                            //result.set(future_cps.await);
-                            //count+= 999.9;
-                            count.set(result);
-                            //not_ended.set(true);
-                            */ //only without use async_std::task::spawn;
-
-                            unsafe { TIME_END = true };
-                        });
+                    if (counting)() == true {
+                        count+=1.0;
+                        let current_second = chrono::Local::now().second();
+                        let current_minute = chrono::Local::now().minute();
+                        if current_second >= (*end_second)() && current_minute >= (*end_minute)() { // error with min
+                            not_ended.set(false);
+                            cps_float.set(count / 5.0);
+                        } if current_minute < (*end_minute)() {
+                            not_ended.set(false);
+                            cps_float.set(count / 5.0);
+                        } if current_second < (*starting_second)() {
+                            not_ended.set(false);
+                            cps_float.set(count / 5.0);
+                        }
+                    } else {
+                        let current_second = chrono::Local::now().second();
+                        let current_minute = chrono::Local::now().minute();
+                        end_second.set(current_second + 5);
+                        starting_second.set(current_second);
+                        if current_second + 5 > 59 {
+                            end_minute.set(current_minute + 1);
+                            end_second.set(end_second - 59);
+                        }
+                        counting.set(true);
                     }
                 },
-                " Click Me To Count! OLD"
+                " Click Me To Count! "
             }
         }
-
-        button {
-            onclick: move | _event | {
-                unsafe { if TIME_END == true {
-                    count+=888.8;
-                } }
-                count+= 1.0;
-            },
-            " Click Me To Count! "
-        }
-
-        //p {"end time: {last_end_time}"} // debug
-       //p {"current time: {last_current_time}"} // debug
 
         if (*not_ended)() {
             p {class: "white", "Clicked : {count}"}
@@ -92,17 +63,27 @@ fn app() -> Element {
             button {
                 onclick: move |_event | {
                     count.set(0.0);
-                    nocounting.set(true);
+                    counting.set(false);
                     not_ended.set(true);
-                    unsafe { TIME_END = false }
+                    end_minute.set(0);
+                    end_second.set(0);
                 },
                 "Test Again"
             }
-            match cps_float {
-                2.0 => rsx!{ p {"Your a Grandma"} p {class: "big", "👵"}},
-                1.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
+
+            match (*cps_float)().round() {
+                20.0 => rsx!{ p {"Your a God"} p {class: "big", "🤑"}},
+                16.0 => rsx!{ p {"Your a Gamer"} p {class: "big", "😎"}},
+                14.0 => rsx!{ p {"Your a Boss"} p {class: "big", "🤵‍♂️"}},
+                10.0 => rsx!{ p {"Your a Chad"} p {class: "big", "💪"}},
+                9.0 => rsx!{ p {"Your a Normie"} p {class: "big", "😃"}},
+                8.0 => rsx!{ p {"Your a Ipad kid"} p {class: "big", "👶"}},
+                7.0 => rsx!{ p {"Your a Grandma"} p {class: "big", "👵"}},
+                5.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
                 _ => rsx!{ p {"Your an Auto clicker!"} p {class: "big", "🤖"} }
             }
+
+            p {"You averaged {cps_float} Clicks per Second (CPS)"}
         }
     }
 }
