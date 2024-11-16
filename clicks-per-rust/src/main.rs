@@ -73,13 +73,25 @@ fn app() -> Element {
 
             match (*cps_float)().round() {
                 20.0 => rsx!{ p {"Your a God"} p {class: "big", "🤑"}},
+                19.0 => rsx!{ p {"Your a God"} p {class: "big", "🤑"}},
+                18.0 => rsx!{ p {"Your a God"} p {class: "big", "🤑"}},
+                17.0 => rsx!{ p {"Your a Gamer"} p {class: "big", "😎"}},
                 16.0 => rsx!{ p {"Your a Gamer"} p {class: "big", "😎"}},
+                15.0 => rsx!{ p {"Your a Gamer"} p {class: "big", "😎"}},
                 14.0 => rsx!{ p {"Your a Boss"} p {class: "big", "🤵‍♂️"}},
+                13.0 => rsx!{ p {"Your a Boss"} p {class: "big", "🤵‍♂️"}},
+                12.0 => rsx!{ p {"Your a Chad"} p {class: "big", "💪"}},
+                11.0 => rsx!{ p {"Your a Chad"} p {class: "big", "💪"}},
                 10.0 => rsx!{ p {"Your a Chad"} p {class: "big", "💪"}},
                 9.0 => rsx!{ p {"Your a Normie"} p {class: "big", "😃"}},
                 8.0 => rsx!{ p {"Your a Ipad kid"} p {class: "big", "👶"}},
                 7.0 => rsx!{ p {"Your a Grandma"} p {class: "big", "👵"}},
+                6.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
                 5.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
+                4.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
+                3.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
+                2.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
+                1.0 => rsx!{ p {"Your an Turtle"} p {class: "big", "🐢"}},
                 _ => rsx!{ p {"Your an Auto clicker!"} p {class: "big", "🤖"} }
             }
 
