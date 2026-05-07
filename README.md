@@ -1,6 +1,6 @@
-# Click Per Second (CPS) Tracker Application
+# Click Per Second (CPS) Tester Application
 
-This project is a **Click Per Second (CPS) Tracker** implemented using the **Dioxus framework** and **Rust**. It allows users to measure their clicking speed over a 5-second interval and provides fun, interactive feedback based on their performance. The project showcases **state management**, **hooks**, and **conditional rendering** in Dioxus, serving as an fun example for developers.
+This project is a **Click Per Second (CPS) Tester** implemented using the **Dioxus framework** and **Rust**. It allows users to measure their clicking speed over a 5-second interval and provides fun, interactive feedback based on their performance. The project showcases **state management**, **hooks**, and **conditional rendering** in Dioxus, serving as an fun example for developers that only stores and processes data locally.
 
 ---
 
